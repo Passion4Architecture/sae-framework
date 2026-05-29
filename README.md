@@ -6,7 +6,7 @@
 
 The SAE Framework is an open‑source, **team‑of‑one** methodology for the AI era. It empowers a single individual with deep tech‑architecture and domain knowledge to **design, code, test, and deploy enterprise‑grade software end‑to‑end** — by orchestrating *digital context* instead of managing *human headcount*.
 
-📖 **[Read the full playbook on the Wiki →](https://github.com/Passion4Architecture/sae-framework/wiki)**
+📖 **[Read the full playbook on the Wiki →](https://github.com/Passion4Architecture/sae-framework/wiki)**  ·  ⚡ **[Framework at a Glance](https://github.com/Passion4Architecture/sae-framework/wiki/Framework-at-a-Glance)** (the whole thing on one page)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) · [![Wiki](https://img.shields.io/badge/docs-wiki-success)](https://github.com/Passion4Architecture/sae-framework/wiki) · [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-orange)](CONTRIBUTING.md)
 
@@ -118,7 +118,20 @@ The full framework lives on the [Wiki](https://github.com/Passion4Architecture/s
 - [x] **[Module 4: The Lean SAE Tech Stack](https://github.com/Passion4Architecture/sae-framework/wiki/Module-4:-The-Lean-SAE-Tech-Stack)** — Zero‑Ops integration & scorecard
 - [x] **[Module 5: Project Navigation & Metrics](https://github.com/Passion4Architecture/sae-framework/wiki/Module-5:-Project-Navigation-&-Metrics)** — Context Entropy vs. story points
 
-**Get hands‑on:** [Getting Started](https://github.com/Passion4Architecture/sae-framework/wiki/Getting-Started) · [SDD Spec Template](https://github.com/Passion4Architecture/sae-framework/wiki/SDD-Spec-Template) · [Glossary](https://github.com/Passion4Architecture/sae-framework/wiki/Glossary)
+**Get hands‑on:** [Getting Started](https://github.com/Passion4Architecture/sae-framework/wiki/Getting-Started) · [Agent Setup & Configuration](https://github.com/Passion4Architecture/sae-framework/wiki/Agent-Setup-and-Configuration) · [SDD Spec Template](https://github.com/Passion4Architecture/sae-framework/wiki/SDD-Spec-Template) · [Glossary](https://github.com/Passion4Architecture/sae-framework/wiki/Glossary)
+
+---
+
+## 🔁 Practice & Execution
+
+The principles above become an operating system here — how you actually run the loop, day to day:
+
+- **[The End‑to‑End Lifecycle](https://github.com/Passion4Architecture/sae-framework/wiki/The-End-to-End-Lifecycle)** — the canonical 10‑phase loop (Frame → Spec → … → Ship → Observe → Maintain)
+- **[Scenario Playbooks](https://github.com/Passion4Architecture/sae-framework/wiki/Scenario-Playbooks)** — worked walkthroughs: greenfield, feature add, bug fix, migration, integration, incident, legacy onboarding
+- **[Operator Techniques](https://github.com/Passion4Architecture/sae-framework/wiki/Operator-Techniques)** — the tactical moves (context priming, adversarial review, spec‑first debugging, prompt patterns)
+- **[Best Practices](https://github.com/Passion4Architecture/sae-framework/wiki/Best-Practices)** — do/don't across spec, context, QA, security, git, cost — plus the five non‑negotiables
+- **[KPIs & Metrics](https://github.com/Passion4Architecture/sae-framework/wiki/KPIs-and-Metrics)** — what a team of one measures (and the vanity metrics to ignore)
+- **[Risks, Security & Governance](https://github.com/Passion4Architecture/sae-framework/wiki/Risks-Security-and-Governance)** — AI‑specific risks, security defaults, privacy/compliance, the pre‑ship checklist
 
 ---
 
