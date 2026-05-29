@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The SAE Framework — Presentation Kit</title>
+<style>
+  @font-face{font-family:'Manrope';font-weight:400;font-style:normal;font-display:swap;src:url('fonts/manrope-400.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:600;font-style:normal;font-display:swap;src:url('fonts/manrope-600.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:700;font-style:normal;font-display:swap;src:url('fonts/manrope-700.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:800;font-style:normal;font-display:swap;src:url('fonts/manrope-800.woff2') format('woff2')}
+  :root{--bg:#f4f5f7;--surface:#fff;--border:#e4e7ec;--ink:#15171c;--text:#3c424e;--muted:#697079;--accent:#E60027;--accent-dark:#b30020}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Manrope',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:3rem;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;width:100%}
+  .mark{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(230,0,39,.28);margin-bottom:1.4rem}
+  .mark svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2}
+  .kr{font-size:.8rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+  h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+  .sub{font-size:1.15rem;color:var(--muted);margin-top:.7rem;max-width:60ch}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2.4rem}
+  a.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.6rem;text-decoration:none;color:inherit;box-shadow:0 1px 3px rgba(21,23,28,.06),0 10px 30px rgba(21,23,28,.05);transition:transform .15s,border-color .15s}
+  a.card:hover{transform:translateY(-4px);border-color:var(--accent)}
+  .ic{width:46px;height:46px;border-radius:11px;background:rgba(230,0,39,.07);border:1px solid rgba(230,0,39,.16);display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+  .ic svg{width:24px;height:24px;stroke:var(--accent);fill:none;stroke-width:1.9}
+  .card h3{font-size:1.2rem;font-weight:800;color:var(--ink);margin-bottom:.35rem}
+  .card p{font-size:.92rem;line-height:1.5}
+  .card .go{margin-top:1rem;font-size:.85rem;font-weight:700;color:var(--accent)}
+  .foot{margin-top:2.2rem;font-size:.85rem;color:var(--muted)}
+  .foot a{color:var(--accent);text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+    <div class="kr">Presentation Kit</div>
+    <h1>The Sovereign Architect‑Engineer Framework</h1>
+    <p class="sub">Three self‑contained, offline visuals. Open any of them — no internet, fonts, or dependencies required. Press <strong>F</strong> for fullscreen, <strong>← →</strong> to navigate the deck.</p>
+    <div class="grid">
+      <a class="card" href="sae-intro.html">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <h3>Introduction Deck</h3>
+        <p>The full 18‑slide talk — the pain, the thesis, the signature ideas, the loop, maturity, and how to adopt it.</p>
+        <div class="go">Open the deck →</div>
+      </a>
+      <a class="card" href="sae-overview.html">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></div>
+        <h3>One‑Page Infographic</h3>
+        <p>The whole framework on a single page — legacy maze vs. the Sovereign Conductor, pillars, and the digital org chart.</p>
+        <div class="go">Open the infographic →</div>
+      </a>
+      <a class="card" href="sae-big-picture.html">
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div>
+        <h3>Interactive Big Picture</h3>
+        <p>A clickable map of the framework — every element opens its detail and links to the wiki.</p>
+        <div class="go">Explore the map →</div>
+      </a>
+    </div>
+    <div class="foot">Part of the <a href="https://github.com/Passion4Architecture/sae-framework/wiki">SAE Framework</a> · MIT License · Maintained by Sanjeev Azad</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sovereign Architect‑Engineer (SAE) Framework — Introduction</title>
+<style>
+  @font-face{font-family:'Manrope';font-weight:400;font-style:normal;font-display:swap;src:url('fonts/manrope-400.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:500;font-style:normal;font-display:swap;src:url('fonts/manrope-500.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:600;font-style:normal;font-display:swap;src:url('fonts/manrope-600.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:700;font-style:normal;font-display:swap;src:url('fonts/manrope-700.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:800;font-style:normal;font-display:swap;src:url('fonts/manrope-800.woff2') format('woff2')}
+  :root{
+    --bg:#ffffff;--surface:#ffffff;--surface-2:#f4f5f7;--border:#e4e7ec;
+    --ink:#15171c;--text:#3c424e;--muted:#697079;--faint:#99a0aa;
+    --accent:#E60027;--accent-soft:#E60027;--accent-dark:#b30020;
+    --gold:#b8690a;--red:#E60027;--green:#0a9d6b;--cyan:#0277b6;
+    --font:'Manrope',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --shadow:0 1px 3px rgba(21,23,28,.06),0 10px 30px rgba(21,23,28,.05);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{font-size:17px}
+  body{font-family:var(--font);background:#e9ebef;color:var(--text);overflow:hidden;height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  #deck{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+  #stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:flex-start;padding:5.5rem 5.5rem 3rem;
+    background:radial-gradient(1200px 640px at 88% -12%,rgba(230,0,39,.05),transparent 60%),radial-gradient(900px 500px at -5% 112%,rgba(21,23,28,.035),transparent 55%),var(--bg);overflow:hidden}
+  .slide.active{display:flex}
+  .slide::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--ink) 1px,transparent 1px),linear-gradient(90deg,var(--ink) 1px,transparent 1px);background-size:64px 64px;opacity:.022;pointer-events:none}
+  .slide::after{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--accent)}
+  .brand{position:absolute;top:2.6rem;right:5.5rem;display:flex;align-items:center;gap:.7rem;z-index:5}
+  .brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(230,0,39,.28)}
+  .brand .mark svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2}
+  .brand .bname{font-size:.86rem;font-weight:800;letter-spacing:.14em;color:var(--ink)}
+  .brand .bname .a{color:var(--accent)}
+  .brand .btag{font-size:.72rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+  .eyebrow{font-size:.82rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1.3rem;display:flex;align-items:center;gap:.6rem}
+  .eyebrow::before{content:"";width:30px;height:3px;background:var(--accent);border-radius:2px}
+  .eyebrow.ico::before{display:none}
+  .eyebrow .eyb{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:2.4;flex:0 0 20px}
+  .num .ti{width:14px;height:14px;vertical-align:-2px;margin-right:.32rem;stroke:currentColor;fill:none;stroke-width:2.2}
+  h1{font-size:3.3rem;font-weight:800;line-height:1.07;letter-spacing:-.02em;color:var(--ink)}
+  h2{font-size:2.3rem;font-weight:800;line-height:1.12;letter-spacing:-.01em;margin-bottom:.5rem;color:var(--ink)}
+  h3{font-size:1.25rem;font-weight:700;color:var(--ink)}
+  .subtitle{font-size:1.3rem;color:var(--muted);font-weight:500;line-height:1.5;max-width:62ch}
+  .lead{font-size:1.5rem;line-height:1.45;font-weight:600;max-width:64ch;color:var(--ink)}
+  p{font-size:.98rem;line-height:1.62;color:var(--text)}
+  .accent{color:var(--accent)}.gold{color:var(--gold)}.red{color:var(--red)}.green{color:var(--green)}.cyan{color:var(--cyan)}
+  strong{color:var(--ink);font-weight:700}
+  .head{margin-bottom:1.7rem}
+  .grid{display:grid;gap:1.3rem}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+  .row{display:flex;gap:1.3rem}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;box-shadow:var(--shadow)}
+  .card.compact{padding:1.1rem 1.25rem}
+  .card .num{font-family:var(--mono);font-size:.82rem;color:var(--accent);font-weight:700;margin-bottom:.5rem;letter-spacing:.04em}
+  .card h3{margin-bottom:.5rem}.card p{font-size:.92rem}
+  .ic{width:44px;height:44px;border-radius:11px;background:rgba(230,0,39,.07);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;border:1px solid rgba(230,0,39,.16)}
+  .ic svg{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:1.9}
+  .stat .n{font-size:2.9rem;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--ink)}
+  .stat .n.sm{font-size:2.1rem}
+  .stat .l{font-size:.84rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:.5rem;font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:.55rem .9rem;border-bottom:1px solid var(--border);vertical-align:top}
+  th{font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
+  td{color:var(--text)}td strong{color:var(--ink)}tr:last-child td{border-bottom:none}
+  thead tr{background:var(--surface-2)}
+  .pill{display:inline-block;padding:.22rem .68rem;border-radius:99px;font-size:.78rem;font-weight:800}
+  .pill.red{background:rgba(230,0,39,.1);color:var(--accent-dark)}.pill.green{background:rgba(10,157,107,.12);color:var(--green)}.pill.gold{background:rgba(184,105,10,.12);color:var(--gold)}.pill.cyan{background:rgba(2,119,182,.12);color:var(--cyan)}
+  .flow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+  .step{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.55rem .8rem;font-size:.92rem;font-weight:700;white-space:nowrap;color:var(--ink);box-shadow:var(--shadow)}
+  .step .si{font-family:var(--mono);color:var(--accent);font-size:.74rem;margin-right:.35rem}
+  .arrow{color:var(--muted);font-size:1.1rem}
+  .callout{border-left:4px solid var(--accent);background:rgba(230,0,39,.05);padding:1.1rem 1.3rem;border-radius:0 12px 12px 0}
+  .callout .ct{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);margin-bottom:.35rem}
+  .callout p{font-size:.92rem}
+  .callout.rc{border-color:var(--ink);background:var(--surface-2)}.callout.rc .ct{color:var(--ink)}
+  /* era progression (slide 5) */
+  .eras{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem}
+  .era{background:var(--surface);border:1px solid var(--border);border-top:5px solid var(--c,#64748b);border-radius:14px;padding:1.3rem 1.25rem;box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .era.sae{background:rgba(230,0,39,.04);border-color:rgba(230,0,39,.3)}
+  .era .yr{font-size:.74rem;font-weight:800;letter-spacing:.06em;color:var(--c,#64748b);text-transform:uppercase}
+  .era .nm{font-size:1.55rem;font-weight:800;color:var(--ink);margin:.1rem 0 .9rem;letter-spacing:-.01em}
+  .era .attr{font-size:.95rem;color:var(--text);margin-bottom:.55rem;line-height:1.3}
+  .era .attr b{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:800;margin-bottom:.08rem}
+  .era .brk{margin-top:auto;padding-top:.65rem;border-top:1px dashed var(--border);font-size:.85rem;color:var(--muted);line-height:1.35}
+  .era.sae .brk{color:var(--accent);font-weight:600;font-style:normal}
+  /* big-picture layered map (slide 7) */
+  .bp{display:flex;flex-direction:column;gap:1.1rem;margin-top:.6rem}
+  .bpb{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.4rem;display:flex;align-items:center;gap:1.3rem}
+  .bpb.base{background:rgba(230,0,39,.04);border-color:rgba(230,0,39,.25)}
+  .bpb .lbl{font-size:.74rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);flex:0 0 116px}
+  .bprow{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;flex:1}
+  .chip{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.62rem .95rem;font-size:1.08rem;font-weight:700;color:var(--ink)}
+  .chip svg{width:21px;height:21px;fill:none;stroke-width:2}
+  .chip.hl{border-color:var(--accent);background:rgba(230,0,39,.05)}
+  .bparr{color:var(--faint);font-size:1.25rem;font-weight:700}
+  .lchip{display:inline-flex;align-items:center;gap:.36rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.5rem .72rem;font-size:.96rem;font-weight:700;color:var(--ink)}
+  .lchip i{font-family:var(--mono);font-style:normal;font-size:.74rem;color:var(--accent)}
+  .lchip.g i{color:var(--green)}.lchip.c i{color:var(--cyan)}
+  .bptag{font-size:.95rem;color:var(--muted);font-weight:600}
+  /* entropy gauge (slide 8) */
+  .egauge{height:22px;border-radius:11px;background:linear-gradient(90deg,#0a9d6b,#0a9d6b 22%,#b8690a 46%,#b8690a 62%,#E60027 86%,#E60027);margin:.3rem 0}
+  .escale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.84rem;font-weight:700;color:var(--faint);margin:.45rem .2rem 1.5rem}
+  .ebands{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+  .eband{background:var(--surface);border:1px solid var(--border);border-top:5px solid var(--c,#0a9d6b);border-radius:14px;padding:1.4rem;box-shadow:var(--shadow)}
+  .eband .bh{display:flex;align-items:center;gap:.7rem;margin-bottom:.8rem}
+  .eband .br{font-family:var(--mono);font-size:1.15rem;font-weight:800;color:var(--c,#0a9d6b)}
+  .eband .bn{font-size:1.45rem;font-weight:800;color:var(--ink)}
+  .eband .bd{font-size:1.02rem;color:var(--text);line-height:1.45;margin-bottom:.9rem}
+  .eband .meta{font-size:.92rem;color:var(--muted);line-height:1.7}
+  .eband .meta b{color:var(--ink);font-weight:700}
+  /* maturity staircase (slide 14) */
+  .stairs{display:flex;gap:1rem;align-items:flex-end;margin-top:.6rem}
+  .stair{flex:1;background:var(--surface);border:1px solid var(--border);border-bottom:5px solid var(--c,#64748b);border-radius:14px;padding:1.1rem 1.05rem;box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:160px}
+  .stair .lv{font-family:var(--mono);font-size:1.1rem;font-weight:800;color:var(--c,#64748b)}
+  .stair .nm{font-size:1.1rem;font-weight:800;color:var(--ink);margin:.25rem 0 .55rem;line-height:1.2}
+  .stair .df{font-size:.86rem;color:var(--text);line-height:1.4;margin-bottom:.6rem}
+  .stair .pv{margin-top:auto;font-size:.8rem;color:var(--muted);border-top:1px dashed var(--border);padding-top:.5rem}
+  .stair .pv b{color:var(--c,#64748b)}
+  /* org-chart connectors (slide 12) */
+  .cwire{position:relative;height:46px;margin:.1rem 0 .3rem}
+  .cwire i{position:absolute;background:var(--border)}
+  .cwire .v{left:50%;top:0;width:2px;height:23px;transform:translateX(-50%)}
+  .cwire .h{top:22px;left:16.666%;right:16.666%;height:2px}
+  .cwire .d{top:22px;width:2px;height:24px}
+  .cwire .d1{left:16.666%}.cwire .d2{left:50%;transform:translateX(-50%)}.cwire .d3{right:16.666%}
+  /* hero title slide (slide 1) */
+  .title{flex-direction:row !important;align-items:center;gap:2.5rem;padding:4.5rem 5.5rem !important;justify-content:flex-start !important}
+  .title .tleft{flex:1.12;min-width:0}
+  .title .tright{flex:.88;display:flex;align-items:center;justify-content:center}
+  .title .tkr{font-size:.82rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:.6rem;margin-bottom:1.4rem}
+  .title .tkr::before{content:"";width:34px;height:3px;background:var(--accent);border-radius:2px}
+  .title h1{font-size:4.4rem;line-height:1.02;letter-spacing:-.03em;font-weight:800;margin:0}
+  .title h1 .a{color:var(--accent)}
+  .title .sub{font-size:1.55rem;color:var(--muted);font-weight:500;line-height:1.4;margin-top:1.4rem;max-width:30ch}
+  .title .rule{width:78px;height:5px;background:var(--accent);border-radius:3px;margin:1.7rem 0}
+  .title .thesis{font-size:1.2rem;line-height:1.5;color:var(--ink);font-weight:600;max-width:42ch}
+  .title .thesis .g{color:var(--accent)}
+  .title .by{margin-top:2.3rem;display:flex;gap:.6rem;flex-wrap:wrap}
+  .title .by span{font-size:.82rem;color:var(--muted);font-weight:700;background:var(--surface-2);border:1px solid var(--border);border-radius:99px;padding:.42rem .85rem}
+  .title .by span.k{background:rgba(230,0,39,.06);border-color:rgba(230,0,39,.25);color:var(--accent-dark)}
+  .title .horb{width:100%;max-width:540px;height:auto}
+  .quote{font-size:1.7rem;font-weight:700;line-height:1.32;letter-spacing:-.01em;color:var(--ink)}
+  .quote .mk{color:var(--accent);font-weight:800}
+  /* .roomy — scale up typography & boxes on slides that have spare vertical space */
+  .slide.roomy h2{font-size:2.75rem}
+  .slide.roomy .lead{font-size:1.72rem;line-height:1.4}
+  .slide.roomy .subtitle{font-size:1.46rem}
+  .slide.roomy .card{padding:1.9rem}
+  .slide.roomy .card.compact{padding:1.4rem 1.5rem}
+  .slide.roomy .card h3{font-size:1.46rem;margin-bottom:.65rem}
+  .slide.roomy .card p{font-size:1.1rem;line-height:1.6}
+  .slide.roomy .stat .n{font-size:3.5rem}
+  .slide.roomy .stat .n.sm{font-size:2.6rem}
+  .slide.roomy .stat .l{font-size:.98rem}
+  .slide.roomy .callout{padding:1.35rem 1.6rem}
+  .slide.roomy .callout p{font-size:1.08rem;line-height:1.55}
+  .slide.roomy .callout .ct{font-size:.88rem}
+  .slide.roomy .grid{gap:1.7rem}
+  .slide.roomy .ic{width:54px;height:54px;border-radius:13px}
+  .slide.roomy .ic svg{width:27px;height:27px}
+  .footnote{position:absolute;bottom:1.7rem;left:5.5rem;right:5.5rem;font-size:.8rem;line-height:1.5;color:var(--muted);border-top:1px solid var(--border);padding-top:.6rem}
+  .pageno{position:absolute;bottom:1.7rem;right:5.5rem;font-size:.78rem;color:var(--muted);font-family:var(--mono);font-weight:600}
+  #nav{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:99px;padding:.4rem .5rem;box-shadow:0 10px 36px rgba(21,23,28,.16);cursor:grab;user-select:none}
+  #nav.hidden{display:none}
+  #nav button{width:32px;height:32px;border-radius:50%;border:none;background:transparent;color:var(--ink);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  #nav button:hover{background:var(--surface-2)}
+  #nav .count{font-size:.72rem;color:var(--muted);font-family:var(--mono);padding:0 .4rem;min-width:54px;text-align:center;font-weight:600}
+  #nav .dot{width:6px;height:6px;border-radius:50%;background:var(--border);cursor:pointer}
+  #nav .dot.on{background:var(--accent);transform:scale(1.3)}
+  #hint{position:fixed;bottom:24px;right:24px;z-index:50;font-size:.62rem;color:var(--faint);font-family:var(--mono)}
+  #progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-soft));z-index:60;transition:width .25s}
+  .bmark{display:flex;align-items:center;gap:.7rem}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="deck"><div id="stage">
+
+<!-- 1 TITLE -->
+<section class="slide title">
+  <div class="brand"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Honest by construction</div></div></div>
+  <div class="tleft">
+    <div class="tkr">A methodology for the agentic era</div>
+    <h1>The Sovereign<br><span class="a">Architect‑Engineer</span><br>Framework</h1>
+    <div class="sub">The operating system for the <strong style="color:var(--ink)">team‑of‑one</strong>.</div>
+    <div class="rule"></div>
+    <div class="thesis">When code is nearly free, the bottleneck is no longer execution — it is <span class="g">clarity</span>. SAE makes one accountable human great at exactly that.</div>
+    <div class="by"><span class="k">Open‑source · v1.0</span><span>MIT License</span><span>Sanjeev Azad</span><span>github.com/Passion4Architecture/sae‑framework</span></div>
+  </div>
+  <div class="tright">
+    <svg class="horb" viewBox="0 0 600 600" font-family="Manrope,sans-serif">
+      <!-- rings -->
+      <circle cx="300" cy="300" r="272" fill="none" stroke="#eceef1" stroke-width="1.5" stroke-dasharray="2 9"/>
+      <circle cx="300" cy="300" r="200" fill="none" stroke="#e4e7ec" stroke-width="1.5"/>
+      <circle cx="300" cy="300" r="128" fill="none" stroke="#e4e7ec" stroke-width="1.5"/>
+      <!-- converging lines from outer points to core -->
+      <g stroke="#e9ebef" stroke-width="1.5">
+        <line x1="570" y1="300" x2="300" y2="300"/><line x1="491" y1="491" x2="300" y2="300"/>
+        <line x1="300" y1="570" x2="300" y2="300"/><line x1="109" y1="491" x2="300" y2="300"/>
+        <line x1="30" y1="300" x2="300" y2="300"/><line x1="109" y1="109" x2="300" y2="300"/>
+        <line x1="300" y1="30" x2="300" y2="300"/><line x1="491" y1="109" x2="300" y2="300"/>
+      </g>
+      <!-- outer grey nodes (the many hand-offs) -->
+      <g fill="#cbd5e1">
+        <circle cx="570" cy="300" r="7"/><circle cx="491" cy="491" r="7"/><circle cx="300" cy="570" r="7"/><circle cx="109" cy="491" r="7"/>
+        <circle cx="30" cy="300" r="7"/><circle cx="109" cy="109" r="7"/><circle cx="300" cy="30" r="7"/><circle cx="491" cy="109" r="7"/>
+      </g>
+      <!-- orbiting agent dots (on r=128) -->
+      <circle cx="364" cy="189" r="11" fill="#0277b6"/>
+      <circle cx="364" cy="411" r="11" fill="#0a9d6b"/>
+      <circle cx="172" cy="300" r="11" fill="#b8690a"/>
+      <!-- core: the one operator -->
+      <circle cx="300" cy="300" r="78" fill="rgba(230,0,39,.10)"/>
+      <circle cx="300" cy="300" r="58" fill="#E60027"/>
+      <polyline points="270,300 286,300 297,276 313,326 323,300 332,300" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- 2 THE PAIN -->
+<section class="slide roomy">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">The Pain</div></div></div>
+  <div class="head"><div class="eyebrow">If this is you, read on</div><h2>You can generate code in seconds…<br>and trust it less than ever.</h2></div>
+  <p class="lead" style="margin-bottom:1.4rem">The AI made the typing free. It did not make the <span class="gold">reviewing</span>, the <span class="gold">verifying</span>, or the <span class="gold">being-accountable</span> free. For most teams, those got <em>harder</em>.</p>
+  <div class="grid g3">
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><h3 class="red">↑ PR review time</h3><p style="margin-top:.6rem">More generated code per change means more to scrutinize — review is now the slow part.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m14.5 9-5 5"/><path d="m9.5 9 5 5"/></svg></div><h3 class="red">↓ Trust in AI output</h3><p style="margin-top:.6rem">Most developers report they don't trust AI output without checking it. Hallucinated correctness is the new defect class.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></div><h3 class="red">↑ Code churn</h3><p style="margin-top:.6rem">More code written, more thrown away. Speed without discipline is just faster rework.</p></div>
+  </div>
+  <div class="callout" style="margin-top:1.3rem"><div class="ct">The real problem</div><p>Faster generation collided with the same old human process — and the hand‑offs between people became the bottleneck. We need an operating model built for <strong>this</strong> constraint, not the last one.</p></div>
+  <div class="footnote">Figures are directional industry signals (developer-sentiment surveys, code-churn analyses), not precise universal measurements — see the wiki's Verification Doctrine for sourcing.</div>
+</section>
+
+<!-- 3 THE AXIOM -->
+<section class="slide" style="justify-content:center">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">The Axiom</div></div></div>
+  <div class="eyebrow">One idea — everything else is a corollary</div>
+  <h1 style="font-size:3.4rem;max-width:24ch">When the cost of generating code approaches <span class="green">zero</span>, the binding constraint becomes <span class="gold">clarity</span>.</h1>
+  <p class="subtitle" style="margin-top:2rem;font-size:1.2rem">So we re‑base the operating model on clarity, not effort — the unit of work, the source of truth, the quality gate, and the metrics all change.</p>
+</section>
+
+<!-- 4 WHAT COLLAPSED -->
+<section class="slide roomy">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Precision</div></div></div>
+  <div class="head"><div class="eyebrow">Be precise — or the skeptics win</div><h2>What collapsed, and what did <span class="red">not</span></h2></div>
+  <div class="grid g2" style="margin-top:.5rem">
+    <div class="card" style="border-color:rgba(10,157,107,.35)"><div class="ic" style="background:rgba(10,157,107,.08);border-color:rgba(10,157,107,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg></div><h3 class="green">Collapsed → ~0</h3><p style="margin-top:.7rem;font-size:.9rem"><strong>Syntax cost.</strong> Writing the code, the boilerplate, the scaffolding, the CRUD. The thing every prior era spent its scarcity budget on.</p></div>
+    <div class="card" style="border-color:rgba(230,0,39,.3)"><div class="ic"><svg viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></div><h3 class="red">Did NOT collapse</h3><p style="margin-top:.7rem;font-size:.9rem"><strong>Clarity. Verification. Accountability.</strong> Knowing what to build, proving it's correct, and being answerable for it. These got relatively <em>more</em> expensive.</p></div>
+  </div>
+  <div class="callout rc" style="margin-top:1.3rem"><div class="ct">Pre‑empting Brooks</div><p>"No Silver Bullet" was right: coding was never the only bottleneck. SAE does <strong>not</strong> claim execution collapsed — only that <strong>syntax</strong> did, while the hard parts remained. That's exactly why the framework elevates verification and clarity. Brooks sharpens the thesis; he doesn't refute it.</p></div>
+  <div class="pageno">04</div>
+</section>
+
+<!-- 5 EVOLUTION -->
+<section class="slide">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Lineage</div></div></div>
+  <div class="head"><div class="eyebrow ico"><svg class="eyb" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><line x1="3" x2="9" y1="12" y2="12"/><line x1="15" x2="21" y1="12" y2="12"/></svg>A methodology is a bet about what is scarce</div><h2>Waterfall → Agile → SAFe → SAE</h2></div>
+  <div class="eras">
+    <div class="era" style="--c:#64748b">
+      <div class="yr">≈ 1970</div><div class="nm">Waterfall</div>
+      <div class="attr"><b>Scarce</b>Change is ruinous</div>
+      <div class="attr"><b>Unit · Truth</b>The phase · a frozen up‑front spec</div>
+      <div class="brk"><strong style="color:var(--ink)">Breaks:</strong> change is free now — the freeze is pure waste.</div>
+    </div>
+    <div class="era" style="--c:#b8690a">
+      <div class="yr">1990s – 2001</div><div class="nm">Agile / Scrum</div>
+      <div class="attr"><b>Scarce</b>Requirements are uncertain</div>
+      <div class="attr"><b>Unit · Truth</b>The story · working software</div>
+      <div class="brk"><strong style="color:var(--ink)">Breaks:</strong> sprint capacity is no longer the constraint.</div>
+    </div>
+    <div class="era" style="--c:#0277b6">
+      <div class="yr">2011</div><div class="nm">SAFe</div>
+      <div class="attr"><b>Scarce</b>Coordinating many teams</div>
+      <div class="attr"><b>Unit · Truth</b>The feature / PI · program backlog</div>
+      <div class="brk"><strong style="color:var(--ink)">Breaks:</strong> the coordination machinery is dead weight once execution collapses.</div>
+    </div>
+    <div class="era sae" style="--c:#E60027">
+      <div class="yr">Now</div><div class="nm">SAE</div>
+      <div class="attr"><b>Scarce</b>Clarity + verification</div>
+      <div class="attr"><b>Unit · Truth</b><strong style="color:var(--ink)">Context Entropy</strong> · the spec, with measured drift</div>
+      <div class="brk">→ The re‑basing for this constraint.</div>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:1.25rem"><div class="ct">Not anti‑Agile</div><p>Each era was <em>right</em> for its constraint. Agile's people‑principles still hold. SAE is what Agile's own first principle demands — respond to the real constraint, not the ceremony — when the constraint moves again.</p></div>
+  <div class="pageno">05</div>
+</section>
+
+<!-- 6 THE HONEST HEADLINE -->
+<section class="slide roomy" style="justify-content:center">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">The Move</div></div></div>
+  <div class="eyebrow">The honest headline</div>
+  <h1 style="font-size:3rem;max-width:24ch">Collapse the <span class="accent">hand‑off</span>,<br>not the <span class="accent">headcount</span>.</h1>
+  <div class="grid g3" style="margin-top:2.2rem">
+    <div class="card" style="text-align:center"><div class="ic" style="margin:0 auto 1rem"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg></div><div class="stat"><div class="n">O(N²) → O(1)</div><div class="l">coordination cost</div></div></div>
+    <div class="card" style="text-align:center"><div class="ic" style="margin:0 auto 1rem;background:rgba(184,105,10,.08);border-color:rgba(184,105,10,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></div><div class="stat"><div class="n gold">conserved</div><div class="l">cognitive cost (as accountability)</div></div></div>
+    <div class="card" style="text-align:center"><div class="ic" style="margin:0 auto 1rem"><svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="stat"><div class="n red">N = 1</div><div class="l">the hook — and the bus factor</div></div></div>
+  </div>
+  <div class="callout rc" style="margin-top:1.4rem"><div class="ct">Reality check — conceded openly</div><p>One operator owning the lifecycle is a single point of failure. The mitigation is structural: the <strong>spec is the succession plan</strong> — if <span class="mono">specs/</span> is authoritative and current, anyone can pick it up. And most teams should adopt the <em>practices</em> without collapsing to N=1.</p></div>
+</section>
+
+<!-- 7 BIG PICTURE -->
+<section class="slide">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">At a Glance</div></div></div>
+  <div class="head"><div class="eyebrow ico"><svg class="eyb" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>The whole framework on one frame</div><h2>The Big Picture</h2></div>
+  <div class="bp">
+    <div class="bpb"><div class="lbl">The shift</div><div class="bprow">
+      <span class="chip" style="color:#64748b">12 layers · O(N²) · months</span><span class="bparr">→</span>
+      <span class="chip" style="color:var(--gold)">bottleneck = clarity</span><span class="bparr">→</span>
+      <span class="chip" style="color:var(--green)">one spec‑centric loop · O(1)</span>
+    </div></div>
+    <div class="bpb"><div class="lbl">Who you conduct</div><div class="bprow">
+      <span class="chip hl"><svg viewBox="0 0 24 24" style="stroke:var(--accent)"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Conductor — you</span><span class="bparr">→</span>
+      <span class="chip"><svg viewBox="0 0 24 24" style="stroke:var(--cyan)"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Visualizer</span>
+      <span class="chip"><svg viewBox="0 0 24 24" style="stroke:var(--accent)"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Engineer</span>
+      <span class="chip"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Guardian</span>
+    </div></div>
+    <div class="bpb"><div class="lbl">The loop</div><div class="bprow">
+      <span class="lchip"><i>0</i>Frame</span><span class="lchip"><i>1</i>Spec</span><span class="lchip"><i>2</i>Prime</span><span class="lchip c"><i>3</i>Generate</span><span class="lchip"><i>4</i>Review</span><span class="lchip g"><i>5</i>Guard</span><span class="lchip"><i>6</i>Reconcile</span><span class="lchip g"><i>7</i>Ship</span><span class="lchip"><i>8</i>Observe</span><span class="lchip"><i>9</i>Maintain</span>
+    </div></div>
+    <div class="bpb base"><div class="lbl">Foundation</div><div class="bprow">
+      <span class="chip">Four pillars</span><span class="bptag">collapse · vertical slice · SDD · AI hygiene</span>
+      <span class="chip" style="margin-left:auto">First Principles&nbsp;<strong style="color:var(--accent)">P1–P7</strong></span>
+    </div></div>
+  </div>
+  <div class="callout" style="margin-top:1.25rem"><div class="ct">The signature ideas</div><p><span class="accent">Context Entropy</span> (unit of work) · <span class="accent">Adversarial Independence</span> (the writer never judges itself) · <span class="accent">measured spec‑drift</span> · <span class="accent">blast‑radius gating</span> — wrapped in a commitment to be honest by construction.</p></div>
+  <div class="pageno">07</div>
+</section>
+
+<!-- 8 SIGNATURE: CONTEXT ENTROPY -->
+<section class="slide">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Signature Idea · 1</div></div></div>
+  <div class="head"><div class="eyebrow ico"><svg class="eyb" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>The moat</div><h2>Context Entropy — measure preparation, not effort</h2></div>
+  <p class="lead" style="margin-bottom:1.8rem">Agile measures effort (story points). Vibe coding measures nothing. SAE measures <span class="gold">how hard the intent is to pin down</span> before generation — the real labor when syntax is free.</p>
+  <div class="egauge"></div>
+  <div class="escale"><span>1</span><span>3</span><span>5</span><span>8</span><span>13</span></div>
+  <div class="ebands">
+    <div class="eband" style="--c:#0a9d6b"><div class="bh"><span class="br">1–3</span><span class="bn">Low</span></div><div class="bd">Linear change in one bounded context.</div><div class="meta"><b>Prep:</b> minimal — just do it<br><b>Time:</b> minutes</div></div>
+    <div class="eband" style="--c:#b8690a"><div class="bh"><span class="br">5–8</span><span class="bn">Medium</span></div><div class="bd">Multi‑file feature across schemas + webhooks.</div><div class="meta"><b>Prep:</b> audit the spec first<br><b>Time:</b> under an hour</div></div>
+    <div class="eband" style="--c:#E60027"><div class="bh"><span class="br">13</span><span class="bn">High</span></div><div class="bd">System‑wide change or major integration.</div><div class="meta"><b>Prep:</b> redefine boundaries first<br><b>Time:</b> an afternoon</div></div>
+  </div>
+  <div class="callout" style="margin-top:1.25rem"><div class="ct">Why it's the moat</div><p>No analog exists in Agile, SAFe, vibe coding, or Spec Kit. It's the numeric proof that SAE measures <strong>clarity</strong>, not hours — and the signal that tells you to stop and spec.</p></div>
+  <div class="pageno">08</div>
+</section>
+
+<!-- 9 SIGNATURE: ADVERSARIAL INDEPENDENCE -->
+<section class="slide roomy">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Signature Idea · 2</div></div></div>
+  <div class="head"><div class="eyebrow">The other moat</div><h2>The writer never judges its own work</h2></div>
+  <p class="lead" style="margin-bottom:1.8rem">Almost all AI coding has the <span class="red">same model in the same context</span> both write <em>and</em> review its output — exactly where hallucinated correctness survives.</p>
+  <div class="grid g2">
+    <div class="card" style="border-color:rgba(230,0,39,.3)"><div class="ic"><svg viewBox="0 0 24 24"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></div><h3 class="red">Self‑review</h3><p style="margin-top:.6rem;font-size:.9rem">The author can't see the gap between what it <em>meant</em> and what it <em>wrote</em>. Confirmation, not verification.</p></div>
+    <div class="card" style="border-color:rgba(10,157,107,.35)"><div class="ic" style="background:rgba(10,157,107,.08);border-color:rgba(10,157,107,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div><h3 class="green">Adversarial Independence</h3><p style="margin-top:.6rem;font-size:.9rem">A fresh‑context <strong>Guardian</strong> sees the spec and interfaces (grey‑box) and is tasked to <strong>refute</strong>, not approve.</p></div>
+  </div>
+  <div class="callout rc" style="margin-top:1.3rem"><div class="ct">Reality check</div><p>Independence cuts <em>correlated</em> error — it doesn't eliminate it. A wrong spec makes Engineer and Guardian agree, and both are wrong. No fresh context fixes a flawed contract.</p></div>
+  <div class="pageno">09</div>
+</section>
+
+<!-- 10 THE SPINE -->
+<section class="slide roomy">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">The Spine</div></div></div>
+  <div class="head"><div class="eyebrow">Built on prior art, sharpened</div><h2>Spec‑as‑truth, with measured drift · blast‑radius gating</h2></div>
+  <div class="grid g2">
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg></div><h3>The spec is the source of truth</h3><p style="margin-top:.5rem">Fix bugs by editing the spec first, then regenerating. <strong>The delta over Spec Kit / Kiro:</strong> we <span class="gold">measure the drift</span> between code and spec — spec‑drift time is the decay canary.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Gate the irreversible by blast radius</h3><p style="margin-top:.5rem">Entropy = how hard to prep. Blast radius = what breaks if wrong. A 1‑line auth change is low entropy, high blast radius — <strong>auth, payments, deletion, schema drops are never auto‑applied.</strong></p></div>
+  </div>
+  <div class="callout" style="margin-top:1.3rem"><div class="ct">Honest about lineage</div><p>Spec‑driven development is prior art (GitHub Spec Kit, AWS Kiro). SAE's originality is the <strong>instrumentation</strong> — measured drift and structural adversarial independence — not the concept.</p></div>
+  <div class="pageno">10</div>
+</section>
+
+<!-- 11 THE LOOP -->
+<section class="slide">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Operating Model</div></div></div>
+  <div class="head"><div class="eyebrow ico"><svg class="eyb" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>End‑to‑end lifecycle</div><h2>One spec‑centric loop, every change</h2></div>
+  <div class="row" style="gap:2.6rem;align-items:center;margin-top:.4rem">
+    <div style="flex:0 0 540px">
+      <svg viewBox="0 0 720 720" style="width:100%;height:auto" font-family="Manrope,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
+        <defs><marker id="lah" markerWidth="11" markerHeight="11" refX="4" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#E60027"/></marker></defs>
+        <path d="M445.5 125 A 250 250 0 1 1 274.5 125" fill="none" stroke="#e4e7ec" stroke-width="3" marker-end="url(#lah)"/>
+        <circle cx="360" cy="360" r="126" fill="#ffffff" stroke="#f0f1f4"/>
+        <text x="360" y="350" fill="#E60027" font-size="23" font-weight="800" text-anchor="middle">SPEC‑CENTRIC</text>
+        <text x="360" y="378" fill="#697079" font-size="13.5" text-anchor="middle">every change re‑enters at Spec</text>
+        <!-- nodes -->
+        <g font-weight="800" font-size="20" text-anchor="middle">
+          <circle cx="360" cy="110" r="30" fill="#fff" stroke="#E60027" stroke-width="3"/><text x="360" y="117" fill="#E60027">0</text>
+          <circle cx="507" cy="158" r="34" fill="#E60027" stroke="#E60027" stroke-width="3"/><text x="507" y="166" fill="#fff">1</text>
+          <circle cx="598" cy="283" r="30" fill="#fff" stroke="#E60027" stroke-width="3"/><text x="598" y="290" fill="#E60027">2</text>
+          <circle cx="598" cy="437" r="30" fill="#fff" stroke="#0277b6" stroke-width="3"/><text x="598" y="444" fill="#0277b6">3</text>
+          <circle cx="507" cy="562" r="30" fill="#fff" stroke="#E60027" stroke-width="3"/><text x="507" y="569" fill="#E60027">4</text>
+          <circle cx="360" cy="610" r="30" fill="#fff" stroke="#0a9d6b" stroke-width="3"/><text x="360" y="617" fill="#0a9d6b">5</text>
+          <circle cx="213" cy="562" r="30" fill="#fff" stroke="#E60027" stroke-width="3"/><text x="213" y="569" fill="#E60027">6</text>
+          <circle cx="122" cy="437" r="30" fill="#fff" stroke="#0a9d6b" stroke-width="3"/><text x="122" y="444" fill="#0a9d6b">7</text>
+          <circle cx="122" cy="283" r="30" fill="#fff" stroke="#b8690a" stroke-width="3"/><text x="122" y="290" fill="#b8690a">8</text>
+          <circle cx="213" cy="158" r="30" fill="#fff" stroke="#E60027" stroke-width="3"/><text x="213" y="166" fill="#E60027">9</text>
+        </g>
+        <!-- labels -->
+        <g font-size="16.5" font-weight="700" fill="#15171c">
+          <text x="360" y="60" text-anchor="middle">Frame</text>
+          <text x="548" y="150" text-anchor="start">Spec</text>
+          <text x="642" y="289" text-anchor="start">Prime</text>
+          <text x="642" y="443" text-anchor="start">Generate</text>
+          <text x="548" y="568" text-anchor="start">Review</text>
+          <text x="360" y="672" text-anchor="middle">Guard</text>
+          <text x="172" y="568" text-anchor="end">Reconcile</text>
+          <text x="78" y="443" text-anchor="end">Ship</text>
+          <text x="78" y="289" text-anchor="end">Observe</text>
+          <text x="172" y="150" text-anchor="end">Maintain</text>
+        </g>
+      </svg>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:1.1rem">
+      <div class="card compact"><div class="ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></div><h3 class="accent">Every fix re‑enters at Spec</h3><p style="margin-top:.4rem">Never patch the code and forget the spec — that's the #1 failure mode (a stale spec). Telemetry → spec amendment → one‑click approve → ship.</p></div>
+      <div class="card compact"><div class="ic"><svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><h3>Two gates never relax</h3><p style="margin-top:.4rem">Reconcile the spec after every change; keep a human gate on the irreversible (auth · payments · deletion · schema). Everything else scales down for trivial work.</p></div>
+      <div style="font-size:.8rem;color:var(--muted)"><span style="color:var(--accent);font-weight:700">●</span> Conductor &nbsp; <span style="color:var(--cyan);font-weight:700">●</span> Engineer/Visualizer &nbsp; <span style="color:var(--green);font-weight:700">●</span> Guardian/Ship &nbsp; <span style="color:var(--gold);font-weight:700">●</span> Telemetry</div>
+    </div>
+  </div>
+  <div class="pageno">11</div>
+</section>
+
+<!-- 12 PERSONAS -->
+<section class="slide">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Conduction</div></div></div>
+  <div class="head"><div class="eyebrow">The digital org chart</div><h2>You conduct; the agents execute</h2></div>
+  <div class="card" style="text-align:center;max-width:660px;margin:.6rem auto 0;background:linear-gradient(135deg,rgba(230,0,39,.12),rgba(230,0,39,.04));border-color:var(--accent)"><h3 style="font-size:1.2rem">🎼 The Conductor — You</h3><p style="margin-top:.25rem">architecture · edge cases · structural‑drift review · final calls</p></div>
+  <div class="cwire"><i class="v"></i><i class="h"></i><i class="d d1"></i><i class="d d2"></i><i class="d d3"></i></div>
+  <div class="grid g3">
+    <div class="card"><div class="ic" style="background:rgba(2,119,182,.08);border-color:rgba(2,119,182,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--cyan)"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h3 class="cyan">The Visualizer</h3><p style="margin-top:.4rem">Generative UI → clean, semantic components.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><h3 class="accent">The Engineer</h3><p style="margin-top:.4rem">Repo‑aware code generation from the spec.</p></div>
+    <div class="card" style="border-color:rgba(10,157,107,.35)"><div class="ic" style="background:rgba(10,157,107,.08);border-color:rgba(10,157,107,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div><h3 class="green">The Guardian</h3><p style="margin-top:.4rem">Fresh context. Its job is to <strong>refute</strong>, never approve.</p></div>
+  </div>
+  <div class="footnote">Honest caveat: the Visualizer/Engineer split is just separation of concerns the industry already does. The real contribution is the Guardian's <em>adversarial independence</em> — the writer is structurally barred from grading itself.</div>
+</section>
+
+<!-- 13 METRICS -->
+<section class="slide">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Measurement</div></div></div>
+  <div class="head"><div class="eyebrow ico"><svg class="eyb" viewBox="0 0 24 24"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>Velocity of one</div><h2>Four metrics that matter — read together</h2></div>
+  <div class="grid g4">
+    <div class="card"><div class="num"><svg class="ti" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>FLOW</div><h3 style="font-size:1rem">Cycle time</h3><p style="margin-top:.4rem">idea → production</p></div>
+    <div class="card"><div class="num"><svg class="ti" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>QUALITY</div><h3 style="font-size:1rem">Regression escape rate</h3><p style="margin-top:.4rem">bugs reaching prod</p></div>
+    <div class="card" style="border-color:rgba(184,105,10,.3)"><div class="num gold"><svg class="ti" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>HEALTH · CANARY</div><h3 style="font-size:1rem">Spec‑drift time</h3><p style="margin-top:.4rem">how long code ≠ spec persists</p></div>
+    <div class="card" style="border-color:rgba(230,0,39,.3)"><div class="num red"><svg class="ti" viewBox="0 0 24 24"><path d="M12 16h.01"/><path d="M12 8v4"/><path d="M15.31 2H8.69L2 8.69v6.62L8.69 22h6.62L22 15.31V8.69z"/></svg>THE LINE</div><h3 style="font-size:1rem">Blast‑radius incidents</h3><p style="margin-top:.4rem">auth · money · data</p></div>
+  </div>
+  <div class="callout" style="margin-top:1.3rem"><div class="ct">Anti‑gaming</div><p>Read flow <em>and</em> quality together: cycle time falling while escape rate rises means you're shipping bugs sooner, not going faster. Ignore vanity metrics — LOC, commits, story points, hours.</p></div>
+  <div class="pageno">13</div>
+</section>
+
+<!-- 14 MATURITY -->
+<section class="slide">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Maturity</div></div></div>
+  <div class="head"><div class="eyebrow ico"><svg class="eyb" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Where are you today?</div><h2>The Maturity Model — proven by metrics</h2></div>
+  <div class="stairs">
+    <div class="stair" style="--c:#64748b"><div class="lv">L1</div><div class="nm">Ad‑hoc</div><div class="df">Prompt, accept, ship on feel. <span style="color:#E60027;font-weight:700">Most teams are here.</span></div><div class="pv"><b>Proof:</b> —</div></div>
+    <div class="stair" style="--c:#0277b6;margin-bottom:42px"><div class="lv">L2</div><div class="nm">Spec‑driven</div><div class="df">The spec is the source of truth.</div><div class="pv"><b>Proof:</b> spec‑drift → 0</div></div>
+    <div class="stair" style="--c:#E60027;margin-bottom:84px"><div class="lv">L3</div><div class="nm">Adversarially‑verified</div><div class="df">A fresh context refutes every change.</div><div class="pv"><b>Proof:</b> Guardian catch‑rate ↑</div></div>
+    <div class="stair" style="--c:#b8690a;margin-bottom:126px"><div class="lv">L4</div><div class="nm">Metric‑instrumented</div><div class="df">You measure flow, quality, health.</div><div class="pv"><b>Proof:</b> 4‑metric scorecard live</div></div>
+    <div class="stair" style="--c:#0a9d6b;margin-bottom:168px"><div class="lv">L5</div><div class="nm">Self‑healing</div><div class="df">The loop maintains itself under the gate.</div><div class="pv"><b>Proof:</b> low MTTR · ~0 blast‑radius</div></div>
+  </div>
+  <div class="callout" style="margin-top:1.25rem"><div class="ct">No skipping</div><p>You can't jump to L5. Each level is unlocked by the one below it — and you're at the level you can <strong>prove</strong>, not the one you aspire to.</p></div>
+  <div class="pageno">14</div>
+</section>
+
+<!-- 15 HONEST BY CONSTRUCTION -->
+<section class="slide">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Credibility</div></div></div>
+  <div class="head"><div class="eyebrow ico"><svg class="eyb" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>A first‑class feature, not a disclaimer</div><h2>Honest by construction</h2></div>
+  <p class="lead" style="margin-bottom:1.2rem">Every bold claim ships paired with a named <span class="accent">Reality Check</span>. We steel‑man the objections before answering them.</p>
+  <div class="grid g2">
+    <div class="card compact"><h3 style="font-size:.9rem">"Vibe coding with a manifesto"</h3><p style="margin-top:.3rem">The opposite — SAE adds the discipline vibe coding lacks: independence, measured drift, gating.</p></div>
+    <div class="card compact"><h3 style="font-size:.9rem">"O(1) is hype"</h3><p style="margin-top:.3rem">Conceded — O(1) is <em>coordination</em> cost only; cognitive cost is conserved as accountability.</p></div>
+    <div class="card compact"><h3 style="font-size:.9rem">"No evidence"</h3><p style="margin-top:.3rem">True today. SAE is a falsifiable hypothesis with instrumentation — the KPI kit is the proof engine.</p></div>
+    <div class="card compact"><h3 style="font-size:.9rem">"Can't survive regulation"</h3><p style="margin-top:.3rem">Keep the mandated gates; apply SAE within them to remove latency, not controls.</p></div>
+  </div>
+  <div class="footnote">A framework that can't name its own limits is marketing. The full steel‑man set lives on the wiki's Objections page.</div>
+</section>
+
+<!-- 16 WHERE SAE SITS -->
+<section class="slide">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Positioning</div></div></div>
+  <div class="head"><div class="eyebrow ico"><svg class="eyb" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Informed synthesis, not first discovery</div><h2>Where SAE sits</h2></div>
+  <table>
+    <thead><tr><th>Approach</th><th>Verification</th><th>Governance / gating</th><th>Unit of work</th></tr></thead>
+    <tbody>
+      <tr><td><strong class="green">SAE</strong> <span style="color:var(--muted)">· solo / small</span></td><td><strong>Adversarial independence</strong></td><td><strong>Blast‑radius gate</strong></td><td><strong>Context Entropy</strong></td></tr>
+      <tr><td>GitHub Spec Kit</td><td>Your agent + CI</td><td>Not prescribed</td><td>The spec</td></tr>
+      <tr><td>AWS Kiro</td><td>Agent generates tests</td><td>Agent hooks</td><td>The spec</td></tr>
+      <tr><td>BMAD‑METHOD</td><td>QA agent persona</td><td>Phase approvals</td><td>The agile story</td></tr>
+      <tr><td>Vibe coding</td><td>"feed the error back"</td><td>None</td><td>The prompt</td></tr>
+    </tbody>
+  </table>
+  <div class="callout" style="margin-top:1.25rem"><div class="ct">The unoccupied lane</div><p>SAE is the <strong>disciplined, measured operating model for solo &amp; small‑team AI‑native delivery</strong>. Run Spec Kit with rigorous review and you have most of SAE — what SAE adds is the numeric unit of work and the structural refusal to let a writer grade itself.</p></div>
+  <div class="pageno">16</div>
+</section>
+
+<!-- 17 ADOPT + TEST -->
+<section class="slide roomy">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Adoption</div></div></div>
+  <div class="head"><div class="eyebrow ico"><svg class="eyb" viewBox="0 0 24 24"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>You don't have to fire anyone</div><h2>Adopt the practices — reversibly</h2></div>
+  <div class="flow" style="margin-bottom:1.3rem">
+    <div class="step"><span class="si">P0</span>Pilot slice</div><span class="arrow">→</span>
+    <div class="step"><span class="si">P1</span>Spec discipline</div><span class="arrow">→</span>
+    <div class="step"><span class="si">P2</span>Adversarial QA</div><span class="arrow">→</span>
+    <div class="step"><span class="si">P3</span>Zero‑Ops</div><span class="arrow">→</span>
+    <div class="step" style="border-color:var(--green)"><span class="si">P4</span>Self‑healing</div>
+  </div>
+  <div class="grid g2">
+    <div class="card compact"><div class="ic"><svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h3 style="font-size:.9rem">Track A · Solo operator</h3><p style="margin-top:.3rem">Run the full loop yourself, slice by slice.</p></div>
+    <div class="card compact" style="border-color:rgba(10,157,107,.35)"><div class="ic" style="background:rgba(10,157,107,.08);border-color:rgba(10,157,107,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h3 style="font-size:.9rem;color:var(--green)">Track B · Existing team</h3><p style="margin-top:.3rem">Adopt the practices without collapsing roles. Most of the value, none of the bus‑factor.</p></div>
+  </div>
+  <div class="callout" style="margin-top:1.5rem"><div class="ct">Take the SAE Test (10 questions, score yourself)</div><p>Does every change re‑enter at the spec? Does a fresh context try to <em>break</em> every non‑trivial change? Do you track spec‑drift time? Is every irreversible action human‑gated? … Score 9–10 = sovereign; most start at 0–3.</p></div>
+  <div class="pageno">17</div>
+</section>
+
+<!-- 18 CLOSING -->
+<section class="slide roomy" style="justify-content:center;padding-top:7.5rem">
+  <div class="brand bmark"><div class="mark"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><div class="bname"><span class="a">SAE</span> FRAMEWORK</div><div class="btag">Join In</div></div></div>
+  <div class="eyebrow">It's a hypothesis — help us prove it</div>
+  <h1 style="font-size:2.8rem;max-width:26ch">Orchestrate clarity.<br>Verify adversarially.<br>Own the output.</h1>
+  <div class="grid g4" style="margin-top:2.4rem;max-width:1500px">
+    <div class="card compact"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></div><h3 class="accent" style="font-size:.95rem">Read the Guide</h3><p style="margin-top:.4rem">The canonical definition + First Principles.</p></div>
+    <div class="card compact"><div class="ic"><svg viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></div><h3 class="accent" style="font-size:.95rem">Take the SAE Test</h3><p style="margin-top:.4rem">Score where you are today.</p></div>
+    <div class="card compact"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></div><h3 class="accent" style="font-size:.95rem">Ship one slice</h3><p style="margin-top:.4rem">Getting Started — 30 minutes.</p></div>
+    <div class="card compact"><div class="ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></div><h3 class="accent" style="font-size:.95rem">Submit a case study</h3><p style="margin-top:.4rem">Bring evidence — wins and scars.</p></div>
+  </div>
+  <div style="margin-top:2.8rem;font-size:.92rem;color:var(--muted)">📖 <span class="accent">github.com/Passion4Architecture/sae‑framework/wiki</span> · MIT · Honest by construction</div>
+</section>
+
+</div></div>
+<div id="nav"><button id="prev" title="Previous (←)">‹</button><span class="count" id="count">1 / 18</span><button id="next" title="Next (→)">›</button></div>
+<div id="hint">← → navigate · N hide nav · F fullscreen</div>
+<script>
+  const slides=[...document.querySelectorAll('.slide')];let i=0;
+  const stage=document.getElementById('stage'),nav=document.getElementById('nav'),count=document.getElementById('count'),progress=document.getElementById('progress');
+  slides.forEach(()=>{const d=document.createElement('span');d.className='dot';nav.insertBefore(d,document.getElementById('next'));});
+  const dots=[...nav.querySelectorAll('.dot')];
+  dots.forEach((d,idx)=>d.onclick=()=>go(idx));
+  function render(){slides.forEach((s,idx)=>s.classList.toggle('active',idx===i));dots.forEach((d,idx)=>d.classList.toggle('on',idx===i));count.textContent=(i+1)+' / '+slides.length;progress.style.width=((i+1)/slides.length*100)+'%';}
+  function go(n){i=Math.max(0,Math.min(slides.length-1,n));render();}
+  document.getElementById('next').onclick=()=>go(i+1);document.getElementById('prev').onclick=()=>go(i-1);
+  function fit(){const s=Math.min(window.innerWidth/1920,window.innerHeight/1080);stage.style.transform='translate(-50%,-50%) scale('+s+')';}
+  window.addEventListener('resize',fit);fit();
+  document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(i+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1);}
+    else if(e.key==='Home'){go(0);}else if(e.key==='End'){go(slides.length-1);}
+    else if(k==='n'){nav.classList.toggle('hidden');}
+    else if(k==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}});
+  (function(){let drag=false,ox=0,oy=0,bx=0,by=0;
+    nav.addEventListener('mousedown',e=>{if(e.target.tagName==='BUTTON'||e.target.classList.contains('dot'))return;drag=true;nav.style.cursor='grabbing';ox=e.clientX;oy=e.clientY;const r=nav.getBoundingClientRect();bx=r.left;by=r.top;nav.style.transform='none';});
+    window.addEventListener('mousemove',e=>{if(!drag)return;nav.style.left=(bx+e.clientX-ox)+'px';nav.style.top=(by+e.clientY-oy)+'px';nav.style.bottom='auto';});
+    window.addEventListener('mouseup',()=>{drag=false;nav.style.cursor='grab';});})();
+  render();
+</script>
+</body>
+</html>

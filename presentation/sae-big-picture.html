@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The SAE Framework — Big Picture</title>
+<style>
+  @font-face{font-family:'Manrope';font-weight:400;font-style:normal;font-display:swap;src:url('fonts/manrope-400.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:500;font-style:normal;font-display:swap;src:url('fonts/manrope-500.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:600;font-style:normal;font-display:swap;src:url('fonts/manrope-600.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:700;font-style:normal;font-display:swap;src:url('fonts/manrope-700.woff2') format('woff2')}
+  @font-face{font-family:'Manrope';font-weight:800;font-style:normal;font-display:swap;src:url('fonts/manrope-800.woff2') format('woff2')}
+  :root{
+    --bg:#ffffff;--surface:#ffffff;--surface-2:#f4f5f7;--border:#e4e7ec;
+    --text:#3c424e;--muted:#697079;--faint:#99a0aa;
+    --accent:#E60027;--accent-soft:#E60027;--accent-dark:#b30020;--gold:#b8690a;--red:#64748b;
+    --green:#0a9d6b;--cyan:#0277b6;--violet:#7c3aed;
+    --font:'Manrope',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{font-size:16px}
+  body{font-family:var(--font);background:#e9ebef;color:var(--text);overflow:hidden;height:100vh;-webkit-font-smoothing:antialiased}
+  #wrap{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+  #stage{position:absolute;left:50%;top:50%;transform-origin:center center;width:1660px;height:1010px;
+    padding:1.8rem 2rem;display:flex;gap:1.3rem;
+    background:radial-gradient(1200px 560px at 85% -10%,rgba(230,0,39,.10),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(10,157,107,.06),transparent 55%),var(--bg)}
+  #stage::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.04;pointer-events:none}
+
+  /* ===== LEFT SPANNING RAIL ===== */
+  .rail{width:236px;flex:0 0 236px;display:flex;flex-direction:column;gap:.55rem;z-index:2}
+  .rail .rlabel{font-size:.58rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:.1rem}
+  .span-node{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--violet);border-radius:9px;padding:.6rem .7rem;cursor:pointer;transition:transform .12s,border-color .12s,background .12s}
+  .span-node:hover{transform:translateX(3px);background:var(--surface-2);border-color:var(--violet)}
+  .span-node h4{font-size:.78rem;font-weight:700}
+  .span-node p{font-size:.6rem;color:var(--faint);margin-top:.12rem}
+
+  /* ===== MAIN COLUMN ===== */
+  .main{flex:1;display:flex;flex-direction:column;gap:.95rem;min-width:0;z-index:2}
+  .mhead{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+  .eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-soft);margin-bottom:.35rem;display:flex;align-items:center;gap:.5rem}
+  .eyebrow::before{content:"";width:24px;height:2px;background:var(--accent)}
+  .mhead h1{font-size:1.55rem;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+  .mhead h1 .a{color:var(--accent-soft)}
+  .legend{display:flex;flex-wrap:wrap;gap:.5rem .8rem;justify-content:flex-end;max-width:520px}
+  .lg{display:flex;align-items:center;gap:.32rem;font-size:.58rem;color:var(--muted)}
+  .lg .s{width:9px;height:9px;border-radius:3px}
+
+  .band{background:rgba(244,245,247,.7);border:1px solid var(--border);border-radius:13px;padding:.7rem .9rem;position:relative}
+  .band > .bl{position:absolute;top:.55rem;left:.9rem;font-size:.56rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .band.pad{padding-top:1.7rem}
+
+  /* node base */
+  .node{cursor:pointer;transition:transform .12s,box-shadow .12s,border-color .12s}
+  .node:hover{transform:translateY(-2px)}
+
+  /* conductor apex */
+  .conductor{background:linear-gradient(135deg,rgba(230,0,39,.22),rgba(230,0,39,.05));border:1px solid var(--accent);border-radius:12px;padding:.7rem 1.1rem;display:flex;align-items:center;gap:.9rem;justify-content:center}
+  .conductor:hover{box-shadow:0 8px 30px rgba(230,0,39,.3)}
+  .conductor .ico{width:34px;height:34px;border-radius:9px;background:rgba(230,0,39,.2);display:flex;align-items:center;justify-content:center}
+  .conductor .ico svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2}
+  .conductor .r{font-size:1rem;font-weight:800}
+  .conductor .s{font-size:.62rem;color:var(--muted)}
+
+  /* operating loop */
+  .loop{display:flex;align-items:center;flex-wrap:wrap;gap:.32rem}
+  .phase{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.42rem .55rem;display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+  .phase:hover{border-color:var(--accent-soft)}
+  .phase .pn{font-family:var(--mono);font-size:.58rem;color:var(--faint)}
+  .phase .pt{font-size:.72rem;font-weight:600}
+  .phase .o{width:7px;height:7px;border-radius:50%}
+  .ar{color:var(--faint);font-size:.75rem}
+  .loopnote{margin-top:.5rem;font-size:.6rem;color:var(--muted)}
+  .loopnote b{color:var(--accent-soft)}
+
+  /* persona / pillar / stack rows */
+  .cards{display:grid;gap:.7rem}
+  .c3{grid-template-columns:repeat(3,1fr)}
+  .c4{grid-template-columns:repeat(4,1fr)}
+  .ncard{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:.7rem .8rem}
+  .ncard .ch{display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem}
+  .ncard .ci{width:28px;height:28px;border-radius:7px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex:0 0 28px}
+  .ncard .ci svg{width:16px;height:16px;fill:none;stroke-width:1.9}
+  .ncard h4{font-size:.82rem;font-weight:700}
+  .ncard .tag{font-size:.55rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+  .ncard p{font-size:.62rem;color:var(--muted);line-height:1.45}
+  .ncard .pn{font-family:var(--mono);font-size:.6rem;color:var(--faint);float:right}
+
+  .stackchip{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.6rem .7rem}
+  .stackchip .t{font-size:.55rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+  .stackchip .v{font-size:.78rem;font-weight:700;margin-top:.12rem}
+  .stackchip .v .a{color:var(--accent-soft)}
+
+  /* problem strip */
+  .fromto{display:flex;align-items:center;gap:.55rem}
+  .ftchip{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:.45rem .65rem;cursor:pointer;transition:transform .12s,border-color .12s}
+  .ftchip:hover{transform:translateY(-2px)}
+  .ftchip.bad{border-color:rgba(100,116,139,.35)}
+  .ftchip .k{font-size:.52rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+  .ftchip .v{font-size:.74rem;font-weight:700}
+  .ftchip.bad .v{color:var(--red)}
+  .ftchip.good .v{color:var(--green)}
+
+  /* category accents */
+  .cat-cond{}
+  .cat-vis .ci svg{stroke:var(--cyan)} .cat-vis{border-color:rgba(2,119,182,.3)}
+  .cat-eng .ci svg{stroke:var(--accent-soft)} .cat-eng{border-color:rgba(230,0,39,.3)}
+  .cat-grd .ci svg{stroke:var(--green)} .cat-grd{border-color:rgba(10,157,107,.3)}
+  .cat-pillar .ci svg{stroke:var(--gold)}
+
+  /* ===== DETAIL DRAWER ===== */
+  #scrim{position:fixed;inset:0;background:rgba(21,23,28,.35);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+  #scrim.on{opacity:1;pointer-events:auto}
+  #drawer{position:fixed;top:0;right:0;height:100vh;width:440px;max-width:92vw;background:var(--surface);border-left:1px solid var(--border);
+    transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1);z-index:41;display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(21,23,28,.18)}
+  #drawer.on{transform:translateX(0)}
+  .dh{padding:1.8rem 1.8rem 1.2rem;border-bottom:1px solid var(--border);position:relative}
+  .dh .dtag{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-soft);margin-bottom:.5rem}
+  .dh h2{font-size:1.5rem;font-weight:800;letter-spacing:-.01em;line-height:1.1}
+  .dclose{position:absolute;top:1.4rem;right:1.4rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+  .dclose:hover{background:var(--border)}
+  .db{padding:1.5rem 1.8rem;overflow-y:auto;flex:1}
+  .db p{font-size:.88rem;line-height:1.6;color:var(--muted);margin-bottom:1.2rem}
+  .db .pts{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.4rem}
+  .db .pts li{font-size:.82rem;line-height:1.45;color:var(--text);padding-left:1.3rem;position:relative}
+  .db .pts li::before{content:"›";position:absolute;left:0;color:var(--accent-soft);font-weight:800}
+  .df{padding:1.2rem 1.8rem;border-top:1px solid var(--border)}
+  .wlink{display:inline-flex;align-items:center;gap:.5rem;background:var(--accent);color:#ffffff;font-weight:700;font-size:.8rem;padding:.6rem 1rem;border-radius:9px;text-decoration:none;transition:background .15s}
+  .wlink:hover{background:var(--accent-soft)}
+  .wlink svg{width:15px;height:15px;stroke:#ffffff;fill:none;stroke-width:2.2}
+
+  #hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);font-size:.62rem;color:var(--faint);font-family:var(--mono);z-index:10;background:rgba(255,255,255,.92);padding:.3rem .8rem;border-radius:99px;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+
+    <!-- ===== LEFT SPANNING RAIL ===== -->
+    <aside class="rail">
+      <div class="rlabel">◆ Spanning concepts</div>
+      <div class="span-node node" data-id="sdd"><h4>Spec‑Driven Development</h4><p>The spec is the source of truth</p></div>
+      <div class="span-node node" data-id="bounded"><h4>Bounded Contexts</h4><p>Isolated, AI‑readable modules</p></div>
+      <div class="span-node node" data-id="hygiene"><h4>AI Hygiene</h4><p>Small, cohesive, ~100‑line files</p></div>
+      <div class="span-node node" data-id="entropy"><h4>Context Entropy</h4><p>Sizing 1–13, not story points</p></div>
+      <div class="span-node node" data-id="gates"><h4>Human‑in‑Loop Gates</h4><p>Gate the irreversible</p></div>
+      <div class="span-node node" data-id="healing"><h4>Self‑Healing Loop</h4><p>Telemetry → spec amendment</p></div>
+      <div class="span-node node" data-id="governance"><h4>Risks &amp; Governance</h4><p>Security, privacy, accountability</p></div>
+      <div class="span-node node" data-id="kpis"><h4>KPIs &amp; Metrics</h4><p>Flow · quality · health</p></div>
+    </aside>
+
+    <!-- ===== MAIN COLUMN ===== -->
+    <div class="main">
+      <div class="mhead">
+        <div>
+          <div class="eyebrow">The framework — interactive map</div>
+          <h1>The Sovereign <span class="a">Architect‑Engineer</span> · Big Picture</h1>
+        </div>
+        <div class="legend">
+          <div class="lg"><span class="s" style="background:var(--accent)"></span>Conductor / Engineer</div>
+          <div class="lg"><span class="s" style="background:var(--cyan)"></span>Visualizer</div>
+          <div class="lg"><span class="s" style="background:var(--green)"></span>Guardian / Ship</div>
+          <div class="lg"><span class="s" style="background:var(--gold)"></span>Pillars</div>
+          <div class="lg"><span class="s" style="background:var(--violet)"></span>Spanning</div>
+        </div>
+      </div>
+
+      <!-- PROBLEM strip -->
+      <div class="fromto">
+        <div class="ftchip bad node" data-id="layers"><div class="k">The problem</div><div class="v">12 Layers · Months</div></div>
+        <span class="ar">→</span>
+        <div class="ftchip node" data-id="bottleneck"><div class="k">The shift</div><div class="v">Bottleneck = Clarity</div></div>
+        <span class="ar">→</span>
+        <div class="ftchip good node" data-id="frame"><div class="k">The SAE</div><div class="v">One loop · Days</div></div>
+      </div>
+
+      <!-- CONDUCTOR -->
+      <div class="conductor node" data-id="conductor">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+        <div><div class="r">🎼 The Conductor — You</div><div class="s">Architecture · edge cases · structural‑drift review · final calls</div></div>
+      </div>
+
+      <!-- OPERATING LOOP -->
+      <div class="band pad">
+        <span class="bl">The Operating Loop — spec‑centric, every change</span>
+        <div class="loop">
+          <div class="phase node" data-id="frame"><span class="o" style="background:var(--accent)"></span><span class="pn">0</span><span class="pt">Frame</span></div><span class="ar">→</span>
+          <div class="phase node" data-id="spec"><span class="o" style="background:var(--accent)"></span><span class="pn">1</span><span class="pt">Spec</span></div><span class="ar">→</span>
+          <div class="phase node" data-id="prime"><span class="o" style="background:var(--accent)"></span><span class="pn">2</span><span class="pt">Prime</span></div><span class="ar">→</span>
+          <div class="phase node" data-id="generate"><span class="o" style="background:var(--cyan)"></span><span class="pn">3</span><span class="pt">Generate</span></div><span class="ar">→</span>
+          <div class="phase node" data-id="review"><span class="o" style="background:var(--accent)"></span><span class="pn">4</span><span class="pt">Review</span></div><span class="ar">→</span>
+          <div class="phase node" data-id="guard"><span class="o" style="background:var(--green)"></span><span class="pn">5</span><span class="pt">Guard</span></div><span class="ar">→</span>
+          <div class="phase node" data-id="reconcile"><span class="o" style="background:var(--accent)"></span><span class="pn">6</span><span class="pt">Reconcile</span></div><span class="ar">→</span>
+          <div class="phase node" data-id="ship"><span class="o" style="background:var(--green)"></span><span class="pn">7</span><span class="pt">Ship</span></div><span class="ar">→</span>
+          <div class="phase node" data-id="observe"><span class="o" style="background:var(--gold)"></span><span class="pn">8</span><span class="pt">Observe</span></div><span class="ar">→</span>
+          <div class="phase node" data-id="maintain"><span class="o" style="background:var(--accent)"></span><span class="pn">9</span><span class="pt">Maintain</span></div><span class="ar">↺</span>
+        </div>
+        <div class="loopnote">Every fix re‑enters at <b>Spec</b> — never the code. Two gates never relax: <b>reconcile the spec</b> &amp; a <b>human gate on irreversibles</b>.</div>
+      </div>
+
+      <!-- DIGITAL ORG CHART -->
+      <div class="band pad">
+        <span class="bl">The Digital Org Chart — AI personas you conduct</span>
+        <div class="cards c3">
+          <div class="ncard node cat-vis" data-id="visualizer"><div class="ch"><div class="ci"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div><h4>The Visualizer</h4><div class="tag">Generative UI</div></div></div><p>Product intent → clean, semantic component code.</p></div>
+          <div class="ncard node cat-eng" data-id="engineer"><div class="ch"><div class="ci"><svg viewBox="0 0 24 24"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg></div><div><h4>The Engineer</h4><div class="tag">Core IDE engine</div></div></div><p>Repo‑aware code generation straight from the spec.</p></div>
+          <div class="ncard node cat-grd" data-id="guardian"><div class="ch"><div class="ci"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg></div><div><h4>The Guardian</h4><div class="tag">Autonomous QA</div></div></div><p>Adversarial testing in a fresh context — breaks the build.</p></div>
+        </div>
+      </div>
+
+      <!-- FOUR PILLARS -->
+      <div class="band pad">
+        <span class="bl">The Four Pillars</span>
+        <div class="cards c4">
+          <div class="ncard node cat-pillar" data-id="pillar1"><span class="pn">01</span><h4>Architect‑Engineer Collapse</h4><p>Vision + execution in one mind.</p></div>
+          <div class="ncard node cat-pillar" data-id="pillar2"><span class="pn">02</span><h4>Single‑Shot Vertical Slice</h4><p>Schema→API→state→UI in one cycle.</p></div>
+          <div class="ncard node cat-pillar" data-id="pillar3"><span class="pn">03</span><h4>Spec‑Driven Development</h4><p>The spec is the source of truth.</p></div>
+          <div class="ncard node cat-pillar" data-id="pillar4"><span class="pn">04</span><h4>High‑Context Modular Design</h4><p>Isolated, AI‑readable contexts.</p></div>
+        </div>
+      </div>
+
+      <!-- FOUNDATION: ZERO-OPS -->
+      <div class="band pad">
+        <span class="bl">Foundation — the Zero‑Ops stack</span>
+        <div class="cards c4">
+          <div class="stackchip node" data-id="stack-work"><div class="t">Workspace</div><div class="v"><span class="a">Cursor + Claude Code</span></div></div>
+          <div class="stackchip node" data-id="stack-fe"><div class="t">Frontend</div><div class="v"><span class="a">Next.js + v0 + Shadcn</span></div></div>
+          <div class="stackchip node" data-id="stack-data"><div class="t">Data</div><div class="v"><span class="a">Supabase / Neon</span></div></div>
+          <div class="stackchip node" data-id="stack-compute"><div class="t">Compute</div><div class="v"><span class="a">Vercel / Cloudflare</span></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== DRAWER ===== -->
+<div id="scrim"></div>
+<aside id="drawer">
+  <div class="dh"><button class="dclose" id="dclose">✕</button><div class="dtag" id="d-tag"></div><h2 id="d-title"></h2></div>
+  <div class="db"><p id="d-desc"></p><ul class="pts" id="d-pts"></ul></div>
+  <div class="df"><a class="wlink" id="d-link" target="_blank" rel="noopener">Read the full page on the wiki<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+</aside>
+
+<div id="hint">Click any element to explore · Esc to close</div>
+
+<script>
+  const WIKI="https://github.com/Passion4Architecture/sae-framework/wiki/";
+  const DATA={
+    /* problem + shift */
+    layers:{t:"The 12 Layers of Friction",c:"The Problem",w:"The-12-Layers-of-Friction",
+      d:"A single idea must survive twelve human hand‑offs to reach production. It isn't a process problem — it's a math problem: communication channels grow quadratically with headcount (Brooks's Law), so a 12‑person squad already carries 66 pathways.",
+      p:["Exec → Portfolio → PRD → UI/UX → Architect → Sprint → Frontend → Backend → PR → QA → DevOps → Sign‑off","C = N(N−1)/2 → 66 pathways at N=12","Each hand‑off is where intent degrades and a meeting is born","SAE collapses all twelve into one automated loop"]},
+    bottleneck:{t:"The Bottleneck Shift",c:"Paradigm",w:"Module-1-The-Sovereign-Paradigm-Shifts",
+      d:"The cost of code, infrastructure, and boilerplate has collapsed toward zero. The constraint on delivery is no longer execution — it is human clarity.",
+      p:["Legacy scarcity: engineering hours & syntax fluency","AI‑native scarcity: structural thinking & clear specs","The sharpest vision, not the largest team, wins","Highest‑leverage work shifts from code to spec"]},
+    /* personas */
+    conductor:{t:"The Conductor (You)",c:"Human · Apex",w:"Module-3-The-Digital-Org-Chart",
+      d:"The single human operator and supreme orchestrator. You guide the context window; the agents handle the execution bytes. Every loop closes with you — the personas never sign off on their own work.",
+      p:["Audits overall system topology","Reviews AI output for subtle structural drift","Verifies edge‑case conditions","Makes strategic product calls on business rules"]},
+    visualizer:{t:"The Visualizer",c:"AI Persona · Generative UI",w:"Module-3-The-Digital-Org-Chart",
+      d:"The persona focused on UI design, component structure, and interaction. Feed it product intent; it compiles clean, semantic component code — eliminating manual styling churn.",
+      p:["Turns requirements into semantic components","Uses the project's design tokens","Emits the view layer only — no business logic","Tools: v0, Shadcn generators"]},
+    engineer:{t:"The Engineer",c:"AI Persona · Core IDE Engine",w:"Module-3-The-Digital-Org-Chart",
+      d:"The core codebase engine with direct repository access. It reads the system‑wide .cursorrules, parses repo files, handles migrations, and writes application logic from the spec.",
+      p:["Repo‑aware generation from the spec","Builds the whole vertical slice in one cycle","Generates structure first, then implementation","Tools: Cursor, Claude Code"]},
+    guardian:{t:"The Guardian",c:"AI Persona · Autonomous QA",w:"Module-3-The-Digital-Org-Chart",
+      d:"The safety net whose sole objective is to BREAK what the Engineer builds. It runs in a fresh, isolated context and is the framework's only built‑in check against hallucinated correctness.",
+      p:["Writes integration tests for every spec edge case","Simulates hostile & degraded inputs","Runs in a sandbox with least privilege","The writer must never be the sole judge of its work"]},
+    /* loop phases */
+    frame:{t:"0 · Frame",c:"Lifecycle · Conductor",w:"The-End-to-End-Lifecycle",
+      d:"Before any spec, name three things out loud: the business rule this serves, the blast radius (what breaks if it's wrong), and the Context Entropy. Sixty seconds that prevents an afternoon of confident, wrong output.",
+      p:["State the business rule","Assess the blast radius","Estimate Context Entropy (1–13)","Scope and risk become explicit"]},
+    spec:{t:"1 · Spec",c:"Lifecycle · Conductor",w:"SDD-Spec-Template",
+      d:"The highest‑leverage phase. Author or update the bounded‑context Markdown spec — data model, API, UI, and, above all, the edge cases. A spec without edge cases is a wish.",
+      p:["One bounded context per spec file","Specify behaviour, not implementation","Edge cases are where defects are prevented","Acceptance criteria become the Guardian's tests"]},
+    prime:{t:"2 · Prime",c:"Lifecycle · Conductor",w:"Operator-Techniques",
+      d:"Load the agent with exactly three things — the relevant spec, the files in that bounded context, and .cursorrules. Nothing else. Context discipline is what keeps generation precise.",
+      p:["Give the agent only what it needs","Avoid polluting the context window","Start fresh when answers drift","Treat the window as scratch, the spec as memory"]},
+    generate:{t:"3 · Generate",c:"Lifecycle · Engineer / Visualizer",w:"Module-2-Core-Pillars-of-SAE-Architecture",
+      d:"Build the entire vertical slice in one cycle so the layers align by construction. UI‑heavy work routes through the Visualizer; logic through the Engineer.",
+      p:["Schema → API → state → UI together","Structure first for review, then implementation","Layers map to each other on the first pass","Single‑shot gives structural alignment"]},
+    review:{t:"4 · Review",c:"Lifecycle · Conductor",w:"Operator-Techniques",
+      d:"Audit the diff (not the whole file) for structural drift: does the API shape match the UI, do types match the schema, did the agent invent scope the spec didn't ask for?",
+      p:["Review the diff, not the file","Flag any unrequested change","Check types and contracts line up","Unrequested scope is a red flag"]},
+    guard:{t:"5 · Guard",c:"Lifecycle · Guardian",w:"Module-3-The-Digital-Org-Chart",
+      d:"Open a fresh context and task it to break the slice, not bless it. Hostile inputs, concurrency, auth bypass, edge cases the spec missed. Independence is the whole point.",
+      p:["Fresh context, no memory of authoring","Assume it's wrong; default to 'broken'","Diverse lenses for high‑blast‑radius work","Findings re‑enter at Reconcile"]},
+    reconcile:{t:"6 · Reconcile",c:"Lifecycle · Conductor",w:"The-End-to-End-Lifecycle",
+      d:"If Guard or a hot‑fix changed behaviour, update the spec before moving on. Skipping this is the #1 way the framework decays into ad‑hoc AI coding.",
+      p:["Fold every fix back into the spec","Keep code and spec in sync","Same‑day reconcile — no spec debt","The spec stays the source of truth"]},
+    ship:{t:"7 · Ship",c:"Lifecycle · Zero‑Ops",w:"Module-4-The-Lean-SAE-Tech-Stack",
+      d:"Git‑push deploy on a Zero‑Ops stack. Anything touching auth, payments, or data deletion passes an explicit human gate — never auto.",
+      p:["Push‑to‑deploy, no manual ops","Human gate on irreversibles","Keep a rollback / feature‑flag path","Automate the reversible; gate the rest"]},
+    observe:{t:"8 · Observe",c:"Lifecycle · Telemetry",w:"Module-5-Project-Navigation-and-Metrics",
+      d:"Production telemetry, traces, and exceptions flow back to the operator. The signal that powers the self‑healing loop.",
+      p:["Structured logging + error tracking","Capture stack trace + payload","Signal routes back into the loop","Watch blast‑radius areas closely"]},
+    maintain:{t:"9 · Maintain",c:"Lifecycle · Conductor",w:"Module-5-Project-Navigation-and-Metrics",
+      d:"An incident or change request becomes a spec amendment, which re‑enters the lifecycle at Spec. Maintenance is just the loop running again — through the spec.",
+      p:["Agent drafts a spec amendment (root cause)","You review and approve the change","Never auto‑apply to auth/payments/deletion","Add a regression test before shipping"]},
+    /* pillars */
+    pillar1:{t:"Pillar 1 · Architect‑Engineer Collapse",c:"Core Pillar",w:"Module-1-The-Sovereign-Paradigm-Shifts",
+      d:"AI‑native execution dissolves the split between Thinkers and Doers. The SAE is a high‑level systems designer commanding a real‑time code‑generation engine — orchestrating structural intent, not typing syntax.",
+      p:["Role specialization becomes an anti‑pattern","The collapse is role‑based, not knowledge‑based","You can't orchestrate what you can't evaluate","Removes the hand‑off, not the expertise"]},
+    pillar2:{t:"Pillar 2 · Single‑Shot Vertical Slice",c:"Core Pillar",w:"Module-2-Core-Pillars-of-SAE-Architecture",
+      d:"Build a feature end‑to‑end — database, API, state, UI — in one unified cycle, so backend models and frontend components stay aligned by construction.",
+      p:["Build vertically, not horizontally","Layers align by construction","Structural alignment ≠ behavioural correctness","You still test the slice's behaviour"]},
+    pillar3:{t:"Pillar 3 · Spec‑Driven Development",c:"Core Pillar",w:"Module-2-Core-Pillars-of-SAE-Architecture",
+      d:"The Markdown spec — not the code — is the supreme source of truth. Fix bugs by editing the spec first, then regenerating. Writing code by hand is treated as an architectural failure.",
+      p:["The spec is the abstract manifest","Bugs are fixed in the spec first","Stale spec = the #1 failure mode","Use the SDD Spec Template"]},
+    pillar4:{t:"Pillar 4 · High‑Context Modular Design",c:"Core Pillar",w:"Module-2-Core-Pillars-of-SAE-Architecture",
+      d:"Structure the codebase for AI readability: strict bounded contexts, self‑documenting layout, and small, single‑responsibility files (~100 lines).",
+      p:["Strict bounded‑context isolation","~100‑line soft ceiling per file","Models are precise on small, cohesive files","Cohesion over hitting a line count"]},
+    /* stack */
+    "stack-work":{t:"Workspace & Execution",c:"Zero‑Ops Stack",w:"Approved-Zero-Ops-Tooling-List",
+      d:"Cursor + Claude Code replace the IDE + Jira + Slack + standups — eliminating ticketing backlogs, manual syntax, and status‑alignment meetings.",
+      p:["Repo‑aware editing with .cursorrules","Terminal‑native agents","No ticket queue, no standups","SAE‑grade on the Zero‑Ops scorecard"]},
+    "stack-fe":{t:"Frontend Foundation",c:"Zero‑Ops Stack",w:"Approved-Zero-Ops-Tooling-List",
+      d:"Next.js + v0 + Shadcn abolish build‑pipeline setup, UI boilerplate, and manual CSS debugging.",
+      p:["Zero‑config builds","Prompt‑to‑component generation","Copy‑in components, no runtime lock‑in","First‑class on edge platforms"]},
+    "stack-data":{t:"Data & Persistence",c:"Zero‑Ops Stack",w:"Approved-Zero-Ops-Tooling-List",
+      d:"Supabase / Neon Postgres eradicate manual DB provisioning, connection‑pool tuning, and backend API scaffolding.",
+      p:["Managed Postgres + instant APIs","Branching DBs, scale‑to‑zero","Standard pg_dump exit — no lock‑in","Auth & storage included"]},
+    "stack-compute":{t:"Infrastructure Compute",c:"Zero‑Ops Stack",w:"Approved-Zero-Ops-Tooling-List",
+      d:"Vercel / Cloudflare Edge remove server provisioning, container management, reverse proxies, and multi‑region routing.",
+      p:["Git‑push deploys","Automatic global edge routing","No servers, containers, or proxies","Generous free tiers"]},
+    /* spanning */
+    sdd:{t:"Spec‑Driven Development",c:"Spanning Concept",w:"SDD-Spec-Template",
+      d:"The practice that holds the whole framework together: a Markdown spec is the source of truth, and every change flows through it. Includes a full spec template.",
+      p:["Specify behaviour, edge cases & acceptance criteria","Version specs/ alongside src/","Fix the spec first, then regenerate","A stale spec is worse than none"]},
+    bounded:{t:"Bounded Contexts",c:"Spanning Concept",w:"Module-2-Core-Pillars-of-SAE-Architecture",
+      d:"Every feature is fully self‑contained. An agent modifying one context never has to parse another to understand its boundaries — isolation prevents model confusion.",
+      p:["One domain per feature folder","Narrow contracts between contexts","Isolation keeps generation precise","Borrowed from Domain‑Driven Design"]},
+    hygiene:{t:"AI Hygiene / Readability",c:"Spanning Concept",w:"Module-2-Core-Pillars-of-SAE-Architecture",
+      d:"Structuring code so models read and edit it with high precision: small cohesive files, self‑documenting layout, strict isolation.",
+      p:["~100‑line soft ceiling","Single responsibility per file","Self‑documenting directory layout","Accuracy decays on 1000‑line monoliths"]},
+    entropy:{t:"Context Entropy (1–13)",c:"Spanning Concept",w:"Module-5-Project-Navigation-and-Metrics",
+      d:"A Fibonacci‑flavoured measure of how much context preparation a task needs before generation — the SAE's sizing unit, replacing story points.",
+      p:["Low 1–3: just do it (minutes)","Medium 5–8: audit the spec first (< 1 hr)","High 13: redefine boundaries first (afternoon)","Pair with a blast‑radius check"]},
+    gates:{t:"Human‑in‑Loop Gates",c:"Spanning Concept",w:"Risks-Security-and-Governance",
+      d:"Auth, payments, data deletion, schema drops, and external sends are never auto‑applied. The agent proposes; you decide. Automate the reversible; gate the irreversible.",
+      p:["The agent proposes, the human decides","Never auto‑apply to irreversibles","The single control that prevents runaway fixes","Applies even in the self‑healing loop"]},
+    healing:{t:"The Self‑Healing Loop",c:"Spanning Concept",w:"Module-5-Project-Navigation-and-Metrics",
+      d:"Production telemetry feeds an agent that isolates root cause and drafts a spec amendment; you approve it in one click and the Zero‑Ops pipeline ships the fix.",
+      p:["Capture → diagnose → propose → gate → re‑run","Fix flows through the spec, not a raw patch","Human approval is not a rubber stamp","For well‑understood, low‑blast‑radius bugs"]},
+    governance:{t:"Risks, Security & Governance",c:"Spanning Concept",w:"Risks-Security-and-Governance",
+      d:"The things to consider before betting a real product on solo AI‑native delivery: AI‑specific risks, security defaults, privacy, compliance, and team‑of‑one accountability.",
+      p:["Hallucinated correctness, prompt injection, insecure code","Secrets never in code or prompts","The spec is your audit trail","You own every line — including the ones you didn't type"]},
+    kpis:{t:"KPIs & Metrics",c:"Spanning Concept",w:"KPIs-and-Metrics",
+      d:"What a team of one measures: flow, quality, and health — not story points or lines of code. Read flow and quality together to avoid gaming.",
+      p:["The 4 that matter: cycle time, escape rate, spec‑drift, blast‑radius incidents","Spec‑drift time is the decay canary","Ignore LOC, commits, story points, hours","Personal instruments, not a performance review"]}
+  };
+
+  const scrim=document.getElementById('scrim'),drawer=document.getElementById('drawer');
+  function open(id){
+    const d=DATA[id];if(!d)return;
+    document.getElementById('d-tag').textContent=d.c;
+    document.getElementById('d-title').textContent=d.t;
+    document.getElementById('d-desc').textContent=d.d;
+    const ul=document.getElementById('d-pts');ul.innerHTML='';
+    d.p.forEach(pt=>{const li=document.createElement('li');li.textContent=pt;ul.appendChild(li);});
+    document.getElementById('d-link').href=WIKI+d.w;
+    scrim.classList.add('on');drawer.classList.add('on');
+  }
+  function close(){scrim.classList.remove('on');drawer.classList.remove('on');}
+  document.querySelectorAll('.node').forEach(n=>n.addEventListener('click',()=>open(n.dataset.id)));
+  document.getElementById('dclose').onclick=close;
+  scrim.onclick=close;
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape')close();
+    if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+  });
+
+  // scale to fit
+  const stage=document.getElementById('stage');
+  function fit(){const s=Math.min(window.innerWidth/1660,window.innerHeight/1010);stage.style.transform='translate(-50%,-50%) scale('+s+')';}
+  window.addEventListener('resize',fit);fit();
+</script>
+</body>
+</html>

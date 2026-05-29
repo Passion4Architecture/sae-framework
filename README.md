@@ -6,7 +6,7 @@
 
 The SAE Framework is an open‑source, **team‑of‑one** methodology for the AI era. It empowers a single individual with deep tech‑architecture and domain knowledge to **design, code, test, and deploy enterprise‑grade software end‑to‑end** — by orchestrating *digital context* instead of managing *human headcount*.
 
-📖 **[Read the full playbook on the Wiki →](https://github.com/Passion4Architecture/sae-framework/wiki)**  ·  ⚡ **[Framework at a Glance](https://github.com/Passion4Architecture/sae-framework/wiki/Framework-at-a-Glance)** (the whole thing on one page)
+📖 **[Read the full playbook on the Wiki →](https://github.com/Passion4Architecture/sae-framework/wiki)**  ·  ⚡ **[Framework at a Glance](https://github.com/Passion4Architecture/sae-framework/wiki/Framework-at-a-Glance)** (the whole thing on one page)  ·  🎤 **[Presentation kit](presentation/)** (offline deck, infographic & interactive map)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) · [![Wiki](https://img.shields.io/badge/docs-wiki-success)](https://github.com/Passion4Architecture/sae-framework/wiki) · [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-orange)](CONTRIBUTING.md)
 
