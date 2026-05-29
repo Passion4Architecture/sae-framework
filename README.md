@@ -57,11 +57,11 @@ C = N(N − 1) / 2        →  a 12-person squad = 66 communication pathways
 
 | Pillar | What it means | Deep dive |
 |---|---|---|
-| **The Architect‑Engineer Collapse** | High‑level structural vision *and* instant multi‑file execution in one person | [Module 1](https://github.com/Passion4Architecture/sae-framework/wiki/Module-1:-The-Sovereign-Paradigm-Shifts) |
-| **Single‑Shot Vertical Slice** | Build a feature end‑to‑end (schema → API → state → UI) in one cycle so layers align by construction | [Module 2](https://github.com/Passion4Architecture/sae-framework/wiki/Module-2:-Core-Pillars-of-SAE-Architecture) |
-| **Spec‑Driven Development (SDD)** | The Markdown spec — not the code — is the source of truth; fix bugs by editing the spec first | [Module 2](https://github.com/Passion4Architecture/sae-framework/wiki/Module-2:-Core-Pillars-of-SAE-Architecture) · [Template](https://github.com/Passion4Architecture/sae-framework/wiki/SDD-Spec-Template) |
-| **High‑Context Modular Design** | Structure code for "AI readability": small cohesive files, strict bounded contexts | [Module 2](https://github.com/Passion4Architecture/sae-framework/wiki/Module-2:-Core-Pillars-of-SAE-Architecture) |
-| **Cognitive Load Minimization** | A "Zero‑Ops" stack — if a tool needs a dedicated admin, it's banned | [Module 4](https://github.com/Passion4Architecture/sae-framework/wiki/Module-4:-The-Lean-SAE-Tech-Stack) |
+| **The Architect‑Engineer Collapse** | High‑level structural vision *and* instant multi‑file execution in one person | [Module 1](https://github.com/Passion4Architecture/sae-framework/wiki/Module-1-The-Sovereign-Paradigm-Shifts) |
+| **Single‑Shot Vertical Slice** | Build a feature end‑to‑end (schema → API → state → UI) in one cycle so layers align by construction | [Module 2](https://github.com/Passion4Architecture/sae-framework/wiki/Module-2-Core-Pillars-of-SAE-Architecture) |
+| **Spec‑Driven Development (SDD)** | The Markdown spec — not the code — is the source of truth; fix bugs by editing the spec first | [Module 2](https://github.com/Passion4Architecture/sae-framework/wiki/Module-2-Core-Pillars-of-SAE-Architecture) · [Template](https://github.com/Passion4Architecture/sae-framework/wiki/SDD-Spec-Template) |
+| **High‑Context Modular Design** | Structure code for "AI readability": small cohesive files, strict bounded contexts | [Module 2](https://github.com/Passion4Architecture/sae-framework/wiki/Module-2-Core-Pillars-of-SAE-Architecture) |
+| **Cognitive Load Minimization** | A "Zero‑Ops" stack — if a tool needs a dedicated admin, it's banned | [Module 4](https://github.com/Passion4Architecture/sae-framework/wiki/Module-4-The-Lean-SAE-Tech-Stack) |
 
 ---
 
@@ -74,7 +74,7 @@ The operator conducts AI personas instead of managing people:
 - **Engineer** — repo‑aware code generation from the spec
 - **Guardian** — autonomous, *adversarial* QA whose job is to break what the Engineer builds
 
-→ [Module 3: The Digital Org Chart](https://github.com/Passion4Architecture/sae-framework/wiki/Module-3:-The-Digital-Org-Chart)
+→ [Module 3: The Digital Org Chart](https://github.com/Passion4Architecture/sae-framework/wiki/Module-3-The-Digital-Org-Chart)
 
 ---
 
@@ -112,11 +112,11 @@ This framework is bold, not naïve. The honest trade‑offs every operator shoul
 
 The full framework lives on the [Wiki](https://github.com/Passion4Architecture/sae-framework/wiki):
 
-- [x] **[Module 1: The Sovereign Paradigm Shifts](https://github.com/Passion4Architecture/sae-framework/wiki/Module-1:-The-Sovereign-Paradigm-Shifts)** — the friction layer & bottleneck shift
-- [x] **[Module 2: Core Pillars of SAE Architecture](https://github.com/Passion4Architecture/sae-framework/wiki/Module-2:-Core-Pillars-of-SAE-Architecture)** — Spec‑Driven Dev, vertical slices & AI hygiene
-- [x] **[Module 3: The Digital Org Chart](https://github.com/Passion4Architecture/sae-framework/wiki/Module-3:-The-Digital-Org-Chart)** — Conductor, Visualizer, Engineer, Guardian
-- [x] **[Module 4: The Lean SAE Tech Stack](https://github.com/Passion4Architecture/sae-framework/wiki/Module-4:-The-Lean-SAE-Tech-Stack)** — Zero‑Ops integration & scorecard
-- [x] **[Module 5: Project Navigation & Metrics](https://github.com/Passion4Architecture/sae-framework/wiki/Module-5:-Project-Navigation-&-Metrics)** — Context Entropy vs. story points
+- [x] **[Module 1: The Sovereign Paradigm Shifts](https://github.com/Passion4Architecture/sae-framework/wiki/Module-1-The-Sovereign-Paradigm-Shifts)** — the friction layer & bottleneck shift
+- [x] **[Module 2: Core Pillars of SAE Architecture](https://github.com/Passion4Architecture/sae-framework/wiki/Module-2-Core-Pillars-of-SAE-Architecture)** — Spec‑Driven Dev, vertical slices & AI hygiene
+- [x] **[Module 3: The Digital Org Chart](https://github.com/Passion4Architecture/sae-framework/wiki/Module-3-The-Digital-Org-Chart)** — Conductor, Visualizer, Engineer, Guardian
+- [x] **[Module 4: The Lean SAE Tech Stack](https://github.com/Passion4Architecture/sae-framework/wiki/Module-4-The-Lean-SAE-Tech-Stack)** — Zero‑Ops integration & scorecard
+- [x] **[Module 5: Project Navigation & Metrics](https://github.com/Passion4Architecture/sae-framework/wiki/Module-5-Project-Navigation-and-Metrics)** — Context Entropy vs. story points
 
 **Get hands‑on:** [Getting Started](https://github.com/Passion4Architecture/sae-framework/wiki/Getting-Started) · [Agent Setup & Configuration](https://github.com/Passion4Architecture/sae-framework/wiki/Agent-Setup-and-Configuration) · [SDD Spec Template](https://github.com/Passion4Architecture/sae-framework/wiki/SDD-Spec-Template) · [Glossary](https://github.com/Passion4Architecture/sae-framework/wiki/Glossary)
 
